@@ -56,7 +56,7 @@ class IDKDatabase {
 	
 	/* Methods to use
 	 * This Class aims to make your DB interface as safe as possible, and for
-	 * this method naming have been specially divided in two:
+	 * this reason method naming have been specially divided in two:
 	 * STANDARD functions: All the methods that you should be using.
 	 * DANGEROUS functions: Starting by an underscore, you'll check their
 	 * source code before using them, as the function will never check your
@@ -68,6 +68,7 @@ class IDKDatabase {
 		return $this->raw_query($query);
 	}
 	
+	// —— UNDER DEV ——
 	public function select(array $fields, array $tables, array $conditions = null) {
 	/* @name select
 	 * @brief Preapares a SELECT query string that would be executed when on the next data fetch.
@@ -76,6 +77,7 @@ class IDKDatabase {
 	 * @returns bool TRUE if the link have been established, FALSE otherwise.
 	 */
 	}
+	// —— UNDER DEV ——
 	
 	/* Private methods
 	 * DO NOT PUT YOUR FINGERS IN HERE!! — Joke ;-)
