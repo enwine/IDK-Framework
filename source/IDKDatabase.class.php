@@ -7,7 +7,24 @@ class IDKDatabase {
 	private static $instance = null;
 	private static $db_link = null;
 	private static $initialized = false;
+	
 	private function __construct() {}
+	
+	public function __destruct() {
+		if( self::$initialized === true ) {
+			mysql_close(self::$db_link);
+		}
+		self::$instance = null;
+		self::$db_link = null;
+		self::$initialized = false;
+	}
+	
+	public function __clone() {
+		trigger_error('Clone is not allowed for IDKDatabase.', E_USER_ERROR);
+	}
+	
+	
+	/* STATIC METHODS*/
 	
 	public static function getInstance() {
 		if( self::$instance === null ) {
@@ -50,46 +67,47 @@ class IDKDatabase {
 		return self::initWithValues(IDKDatabase_HOST, IDKDatabase_USER, IDKDatabase_PASSWORD, IDKDatabase_DBNAME);
 	}
 	
-	public function __clone() {
-		trigger_error('Clone is not allowed for IDKDatabase.', E_USER_ERROR);
-	}
 	
-	/* Methods to use
-	 * This Class aims to make your DB interface as safe as possible, and for
-	 * this reason method naming have been specially divided in two:
-	 * STANDARD functions: All the methods that you should be using.
-	 * DANGEROUS functions: Starting by an underscore, you'll check their
-	 * source code before using them, as the function will never check your
-	 * input.
-	 ! DANGEROUS and PRIVATE methods may be undocumented.
-	 */
-	public function _query($query) {
-		trigger_error('Using methods starting with an underscore (DANGEROUS methods) is discouraged.', E_USER_NOTICE);
+	/* PUBLIC METHODS */
+	
+	public function query($query) {
 		return $this->raw_query($query);
 	}
 	
-	// —— UNDER DEV ——
-	public function select(array $fields, array $tables, array $conditions = null) {
-	/* @name select
-	 * @brief Preapares a SELECT query string that would be executed when on the next data fetch.
-	 * @input array $fields, array $tables[, array $conditions = null]
-	 * @use $instance->select(array('field1', 'field2', ...), array('table1', 'table2', ...), array('field1=SomeValue', 'field2 NOT LIKE PartialValue%', ...)); 
-	 * @returns bool TRUE if the link have been established, FALSE otherwise.
-	 */
+	public function fetch_assoc($query) {
+		return $this->fetch_array($query, MYSQL_ASSOC);
 	}
-	// —— UNDER DEV ——
 	
-	/* Private methods
-	 * DO NOT PUT YOUR FINGERS IN HERE!! — Joke ;-)
-	 */
+	public function fetch_row($query) {
+		return $this->fetch_array($query, MYSQL_NUM);
+	}
+	
+	
+	/* PRIVATE METHODS */
+	
 	private function check() {
 		if( self::$db_link === null ) {
 			trigger_error('DB link not established. Establish it before querying.', E_USER_ERROR)
 		}
 	}
+	
 	private function raw_query($query) {
 		$this->check();
 		return mysql_query($query, self::$db_link);
 	}
+	
+	private function fetch_array($query, $result_type) {
+		$array = array( 'data'=>array(), 'rows'=>0);
+		$result = $this->raw_query($query);
+		while($data = mysql_fetch_array($result, $result_type)) {
+			foreach($data as $k=>$v) {
+				$array['data'][$array['rows']] = array();
+				$array['data'][$array['rows']][$k] = $v; 
+			}
+			$array['rows']++;
+		}
+		mysql_free_result($result);
+		return $array;
+	}	
 	  
 }
