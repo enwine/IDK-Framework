@@ -3,3 +3,15 @@ IDK-Framework
 Most used IDK (www.idako.us) classes, starting from base to shape a little growing Framework.
 
 It's not recommended to public use for now, but it is released as open source under a MIT-license style, see LICENSE to know more about that.
+
+
+CLASSES
+=======
+
+ * IDKCore.class.php - Partially implemented, for now: properties 100% implemented, events coming soon. [0.6]
+ * IDKDatabase.class.php - Functional [0.9]
+ * IDKFactory.class.php - Fast factory pattern implemented [0.8]
+ * IDKLog.class.php - [1.0]
+
+
+~vg

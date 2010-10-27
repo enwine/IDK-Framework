@@ -1,4 +1,7 @@
 <?php
+
+/* Code documented at its GitHub Wiki, read more at www.github.com/enwine/IDK-Framework/ */
+
 class IDKDatabase {
 	/* IDKDatabase — Super-easy MySQL DB interface for PHP
 	 * Sigleton pattern applied.
@@ -47,10 +50,12 @@ class IDKDatabase {
 		self::$initialized = false;
 		self::$db_link = mysql_connect($IDKDatabase_HOST, $IDKDatabase_USER, $IDKDatabase_PASSWORD, true);
 		if( self::$db_link === false ) {
+			trigger_error('Unable to establish DB link.', E_USER_WARNING);
 			return false;
 		}
 		$db_selection = mysql_select_db($IDKDatabase_DBNAME, self::$db_link);
 		if( $db_selection === false ) {
+			trigger_error('Unable to select the database given.', E_USER_WARNING);
 			return false;
 		}
 		self::$initialized = true;
@@ -78,7 +83,7 @@ class IDKDatabase {
 		return $this->fetch_array($query, MYSQL_ASSOC);
 	}
 	
-	public function fetch_row($query) {
+	public function fetch_rows($query) {
 		return $this->fetch_array($query, MYSQL_NUM);
 	}
 	
@@ -86,8 +91,8 @@ class IDKDatabase {
 	/* PRIVATE METHODS */
 	
 	private function check() {
-		if( self::$db_link === null ) {
-			trigger_error('DB link not established. Establish it before querying.', E_USER_ERROR)
+		if( self::$initialized === false ) {
+			trigger_error('DB link not initialized. Initialize it before querying.', E_USER_ERROR);
 		}
 	}
 	
@@ -100,8 +105,8 @@ class IDKDatabase {
 		$array = array( 'data'=>array(), 'rows'=>0);
 		$result = $this->raw_query($query);
 		while($data = mysql_fetch_array($result, $result_type)) {
+			$array['data'][$array['rows']] = array();
 			foreach($data as $k=>$v) {
-				$array['data'][$array['rows']] = array();
 				$array['data'][$array['rows']][$k] = $v; 
 			}
 			$array['rows']++;
