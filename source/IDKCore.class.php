@@ -3,27 +3,28 @@
 /* Code documented at its GitHub Wiki, read more at www.github.com/enwine/IDK-Framework/ */
 
 abstract class IDKCore {
-	
+
 // -- PROPERTIES -- //	
-	
+
 	private $IDKvar_properties = array();
-	
+
 	final protected function getProperty($prop_name) {
 		if( array_key_exists($prop_name, $this->IDKvar_properties) ) {
-			return $this->IDKvar_properties[$prop_name];
+			return $this->IDKvar_properties[$prop_name]['data'];
 		} else {
 			trigger_error('Unable to get property: <b>$'.$arg[$i].'</b> value\'s in '.__CLASS__, E_USER_ERROR);
 		}
 	}
-	
+
 	final protected function setProperty($prop_name, $prop_value=null) {
 		if( array_key_exists($prop_name, $this->IDKvar_properties) ) {
+				$this->IDKvar_properties[$prop_name]['data'] = $prop_value;
 				return $this;
 		} else {
 			trigger_error('Unable to set a new value to property: <b>$'.$func.'</b> in '.__CLASS__, E_USER_ERROR);
 		}
 	}
-	
+
 	final private function __call($func, $arg) {
 	//$this->addProperties($prop1, $prop2, ...);
 		if( $func === 'addProperties' ) {
@@ -45,6 +46,7 @@ abstract class IDKCore {
 					//Nothig to do;
 				}
 				$i++;
+				echo '<hr />';
 			}
 			return $this;
 		}
@@ -91,12 +93,12 @@ abstract class IDKCore {
 			trigger_error('Unable to call method <b>$'.$func.'</b> in '.__CLASS__, E_USER_ERROR);
 		}
 	}
-		
+
 	private function __set($var_name, $var_value) {
 		trigger_error('Unable to access to var: <b>$'.$var_name.'</b> in '.__CLASS__, E_USER_ERROR);
 	}
 	private function __get($var_name) {
 		trigger_error('Unable to access to var: <b>$'.$var_name.'</b> in '.__CLASS__, E_USER_ERROR);
 	}
-	  
+
 }
