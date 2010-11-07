@@ -46,7 +46,6 @@ abstract class IDKCore {
 					//Nothig to do;
 				}
 				$i++;
-				echo '<hr />';
 			}
 			return $this;
 		}
